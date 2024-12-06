@@ -1,49 +1,36 @@
-resource "aws_eks_cluster" "example" {
-  name = "example"
+resource "aws_eks_cluster" "ytlc_eks_cluster" {
+  name = var.cluster_name
+  role_arn = var.cluster_role_arn
+  version = var.eks_version
 
   access_config {
     authentication_mode = "API"
   }
-
-  role_arn = aws_iam_role.example.arn
-  version  = "1.31"
-
+  
   vpc_config {
-    subnet_ids = [
-      aws_subnet.az1.id,
-      aws_subnet.az2.id,
-      aws_subnet.az3.id,
-    ]
+    subnet_ids = var.subnet_ids
+    security_group_ids = var.security_groups
   }
 
-  # Ensure that IAM Role permissions are created before and deleted
-  # after EKS Cluster handling. Otherwise, EKS will not be able to
-  # properly delete EKS managed EC2 infrastructure such as Security Groups.
-  depends_on = [
-    aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy,
-  ]
 }
 
-resource "aws_iam_role" "cluster" {
-  name = "eks-cluster-example"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "sts:AssumeRole",
-          "sts:TagSession"
-        ]
-        Effect = "Allow"
-        Principal = {
-          Service = "eks.amazonaws.com"
-        }
-      },
-    ]
-  })
+resource "aws_eks_addon" "coredns_addons" {
+  name       = var.cluster_name
+  addon_name = "coredns"
+  addon_version = var.coredns_version
+  resolve_conflicts_on_update = "OVERWRITE"
 }
 
-resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = aws_iam_role.cluster.name
+resource "aws_eks_addon" "kube_proxy_addons" {
+  name       = var.cluster_name
+  addon_name = "kube-proxy"
+  addon_version = var.kube_proxy_version
+  resolve_conflicts_on_update = "OVERWRITE"
+}
+
+resource "aws_eks_addon" "vpc_cni_addons" {
+  name       = var.cluster_name
+  addon_name = "vpc-cni"
+  addon_version = var.vpc_cni_version
+  resolve_conflicts_on_update = "OVERWRITE"
 }

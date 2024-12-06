@@ -48,7 +48,7 @@ variable "api_server_url" {
 variable "volume_size" {
   description = "Root volume size for worker node"
   type        = number
-  default     = 20
+  default     = 50
 }
 
 variable "tags" {
