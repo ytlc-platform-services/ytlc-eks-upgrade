@@ -2,9 +2,9 @@ provider "aws" {
   region = var.region
 }
 
-module "iam" {
-  source = "./modules/iam"
-}
+#module "iam" {
+#  source = "./modules/iam"
+#}
 
 module "eks_controlplane" {
   source      = "./modules/eks-controlplane"
