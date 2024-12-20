@@ -4,7 +4,8 @@ resource "aws_instance" "eks_worker" {
   count                  = var.worker_count
   subnet_id              = element(var.subnet_ids, count.index)
   key_name               = var.key_name
-  iam_instance_profile   = var.iam-instance-profile
+  host_id                = var.host_id
+#  iam_instance_profile   = var.iam-instance-profile
   vpc_security_group_ids = var.worker_security_group_id
 
   user_data = <<EOF

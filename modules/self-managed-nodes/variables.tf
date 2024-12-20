@@ -66,3 +66,8 @@ variable "iam_instance_profile" {
   description = "iam instance profile name"
   type        = string
 }
+
+variable "host_id" {
+  description = "Dedicated Host ID"
+  type        = string
+}
